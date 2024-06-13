@@ -2,7 +2,6 @@ import 'package:app_asistencia/config/api/apiServicio.dart';
 import 'package:app_asistencia/config/theme/paletaColors.dart';
 import 'package:app_asistencia/provider/user_provider.dart';
 import 'package:app_asistencia/widget/custom_form_field.dart';
-import 'package:app_asistencia/widget/custom_text_form_field.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -24,7 +23,7 @@ class _LoginPageState extends State<LoginPage> {
   String password_text = '';
 
   Future<void> loginUser() async{
-    // context.go('/home');
+    context.go('/home');
     try {
       print('$correo_text $password_text');
       final response = await dio.post(
@@ -86,10 +85,7 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
-    // print('status: ${bloc.status}');
-    // print('token: ${bloc.token}');
     return Container(
-      // height: MediaQuery.of(context).size.height,
       color: backgroundColor,
       child: Form(
         key: _formKey,
@@ -130,8 +126,6 @@ class _LoginPageState extends State<LoginPage> {
               obscureText: false,
             ),
             const SizedBox(height: 30,),
-            // Contaseña 
-            // icon: const Icon(Icons.vpn_key_rounded, size: 25,)
             CustomFormField(
               errorMessage: errorPassword, 
               label: 'Contaseña', 

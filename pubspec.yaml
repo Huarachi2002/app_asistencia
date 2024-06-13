@@ -7,7 +7,6 @@ environment:
   sdk: '>=3.3.2 <4.0.0'
 
 dependencies:
-  animated_tree_view: ^2.2.0
   dio: ^5.4.3+1
   flutter:
     sdk: flutter

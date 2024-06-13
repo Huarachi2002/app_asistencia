@@ -114,7 +114,7 @@ class _HomePageState extends State<HomePage> {
         body: (data.isEmpty) 
           ? const Center(child: CircularProgressIndicator(),)
           :
-            (currentIndex == 0) 
+            (currentIndex == 0)
             ? _HorarioView(data: data,)
             : const _LicenciaView()
         );
@@ -346,7 +346,8 @@ List<String> options = [
   'Emergencia Familiares',
   'Fallecimiento de un Familiar',
   'Tramites Administrativos',
-  'Problemas Legales'
+  'Problemas Legales',
+  'Otro'
 ];
 
 class _LicenciaView extends StatefulWidget {
@@ -360,36 +361,37 @@ class _LicenciaViewState extends State<_LicenciaView> {
 
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   String currentOption = options[0];
-  String descriptionVale = '';
+  String motivoValue = options[0];
+  String descriptionValue = '';
   int _charCount = 0;
   final int _maxChars = 300;
+  DateTime selectedDate = DateTime.now();
+  late TextEditingController textController;
+  late TextEditingController textFromController;
+
 
   Future<void> licencia ()async{
+    print(motivoValue);
+    print(descriptionValue);
+    print(selectedDate);
     try {
-      print(DateTime.now().toString().substring(0,10));
-
-      final fechaNow = DateTime.now().toString().substring(0,10);
       final tokenUser = Provider.of<UserProvider>(context, listen: false).token;
       final Map<String, dynamic> headers = {
         'Authorization': 'Bearer $tokenUser',
         'Content-Type': 'application/json',
       };
 
-      final response = await dio.post(
+      await dio.post(
         '/licencia',
         data: {
-          "titulo": currentOption,
-          "descripcion": descriptionVale,
-          "fecha": fechaNow
+          "titulo": motivoValue,
+          "descripcion": descriptionValue,
+          "fecha": '${selectedDate.year}-${selectedDate.month}-${selectedDate.day}'
         },
         options: Options(
           headers: headers
         )
       );
-      print(response);
-      setState(() {
-        descriptionVale = '';
-      });
     } on DioException catch (e) {
         if(e.response != null){
           print('headers: ${e.response!.headers}');
@@ -399,13 +401,36 @@ class _LicenciaViewState extends State<_LicenciaView> {
     } 
   }
 
+  void resertValue(){
+    setState(() {
+      currentOption = options[0];
+      motivoValue = currentOption;
+      textController.clear();
+      textFromController.clear();
+      descriptionValue ='';
+      selectedDate = DateTime.now();
+      _charCount = 0;
+    });
+    print(motivoValue);
+    print(descriptionValue);
+  }
+
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     setState(() {
-      _charCount = descriptionVale.length;
+      _charCount = descriptionValue.length;
+      textController = TextEditingController();
+      textFromController = TextEditingController();
     });
+  }
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    textController.dispose();
+    textFromController.dispose();
   }
 
 
@@ -417,6 +442,7 @@ class _LicenciaViewState extends State<_LicenciaView> {
       // borderSide: BorderSide(color: colors.primary),
       borderRadius: BorderRadius.circular(5)
     );
+
 
     return Container(
           width: double.infinity,
@@ -461,23 +487,40 @@ class _LicenciaViewState extends State<_LicenciaView> {
                           ),
                         ),
                         SizedBox(
-                          height: MediaQuery.of(context).size.height * 0.4,
+                          height: MediaQuery.of(context).size.height * 0.45,
                           child: ListView.builder(
                             itemCount: options.length,
                             itemBuilder: (context, index) {
                               return RadioListTile(
-                                  title: Text(options[index]),
-                                  value: options[index],
-                                  groupValue: currentOption,
-                                  onChanged: (value) {
-                                    setState(() {
-                                      currentOption = value.toString();
-                                    });
-                                  },
-                                );
+                                title: Text(options[index]),
+                                value: options[index],
+                                groupValue: currentOption,
+                                onChanged: (value) {
+                                  setState(() {
+                                    currentOption = value.toString();
+                                    motivoValue = currentOption;
+                                  });
+                                },
+                              );
                             },
                           ),
                         ),
+                        if (currentOption == 'Otro')
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                            child: TextField(
+                              controller: textController,
+                              onSubmitted: (String value) {
+                                setState(() {
+                                  motivoValue = textController.text;
+                                });
+                              },
+                              decoration: const InputDecoration(
+                                labelText: 'Escriba el motivo en especifico',
+                              ),
+                            ),
+                          ),
+
                         const SizedBox(
                           height: 10,
                         ),
@@ -494,14 +537,14 @@ class _LicenciaViewState extends State<_LicenciaView> {
                           height: 10,
                         ),
                         TextFormField(
+                          controller: textFromController,
                           scrollController: ScrollController(),
                           maxLines: null,
                           onChanged: (value) {
                             setState(() {
-                              descriptionVale = value;
-                              _charCount = descriptionVale.length;
+                              descriptionValue = value;
+                              _charCount = descriptionValue.length;
                             });
-                            print(descriptionVale);
                           },
                           autocorrect: true,
                           maxLength: _maxChars,
@@ -522,6 +565,34 @@ class _LicenciaViewState extends State<_LicenciaView> {
                     
                           ),
                         ),
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        Center(
+                          child: Column(
+                            children: [
+                              Text('${selectedDate.day}/${selectedDate.month}/${selectedDate.year}'),
+                              ElevatedButton.icon(
+                                onPressed: () async{
+                                  final DateTime? dateTime = await showDatePicker(
+                                    context: context, 
+                                    initialDate: selectedDate,
+                                    firstDate: DateTime(2000), 
+                                    lastDate: DateTime(3000)
+                                  );
+                                  if(dateTime != null){
+                                    setState(() {
+                                      selectedDate = dateTime;
+                                    });
+                                  }
+                                },
+                                label: const Text('Seleccionar Fecha'), 
+                                icon: const Icon(Icons.calendar_month_rounded),  
+                              ),
+                            ],
+                          ),
+                        ),
+                        
                         
                         Padding(
                           padding: const EdgeInsets.all(20.0),
@@ -530,8 +601,8 @@ class _LicenciaViewState extends State<_LicenciaView> {
                               onPressed: () {
                                 final isValid = _formKey.currentState!.validate();
                                 if(!isValid) return;
-                                print(descriptionVale);
                                 licencia();
+                                resertValue();
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   const SnackBar(content: Text('Formulario Enviado'))
                                 );
