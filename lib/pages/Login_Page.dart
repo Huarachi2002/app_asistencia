@@ -53,7 +53,6 @@ class _LoginPageState extends State<LoginPage> {
           });
         }
     } 
-    
   }
 
   String? validatorCorreo (String? value){

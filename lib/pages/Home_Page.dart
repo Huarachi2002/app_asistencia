@@ -117,7 +117,7 @@ class _HomePageState extends State<HomePage> {
             (currentIndex == 0)
             ? _HorarioView(data: data,)
             : const _LicenciaView()
-        );
+      );
   }
 }
 
