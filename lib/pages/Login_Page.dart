@@ -22,37 +22,32 @@ class _LoginPageState extends State<LoginPage> {
   String errorPassword = '';
   String password_text = '';
 
-  Future<void> loginUser() async{
+  Future<void> loginUser(BuildContext context) async{
     context.go('/home');
-    try {
-      print('$correo_text $password_text');
-      final response = await dio.post(
-        '/auth/login',
-        data: { 
-          'username': correo_text,
-          'password': password_text,
-        },
-      );
-      print(response.data);
-      final idUser = response.data['id'];
-      final tokenUser = response.data['token'];
-      context.read<UserProvider>().changeUserEmail(newUserEmail: correo_text, newId: idUser.toString(), newToken: tokenUser );
-      context.go('/home');
+    // try {
+    //   print('$correo_text $password_text');
+    //   final response = await dio.post(
+    //     '/auth/login',
+    //     data: { 
+    //       'username': correo_text,
+    //       'password': password_text,
+    //     },
+    //   );
+    //   print(response.data);
+    //   final idUser = response.data['id'];
+    //   final tokenUser = response.data['token'];
+    //   context.read<UserProvider>().changeUserEmail(newUserEmail: correo_text, newId: idUser.toString(), newToken: tokenUser );
+    //   context.go('/home');
 
-    }on DioException catch (e) {
-        print('data: ${e.response!.data}');
-        print('headers: ${e.response!.headers}');
-        print('requestOptions: ${e.response!.requestOptions}');
-        if(e.response != null){
-          setState(() {
-            // if(e.response!.data['meta']['message'] == 'Datos incorrectos'){
-            //   errorMessage = e.response!.data['errors']['details'][0];
-            // }else{
-            //   errorPassword = 'Contraseña incorrecta';
-            // }
-          });
-        }
-    } 
+    // }on DioException catch (e) {
+    //     print('data: ${e.response!.data}');
+    //     print('headers: ${e.response!.headers}');
+    //     print('requestOptions: ${e.response!.requestOptions}');
+    //     if(e.response != null){
+    //       setState(() {
+    //       });
+    //     }
+    // } 
   }
 
   String? validatorCorreo (String? value){
@@ -74,12 +69,6 @@ class _LoginPageState extends State<LoginPage> {
   }
   void onChangedPassword (String value)  {
     password_text = value;
-  }
-
-  @override
-  void dispose() {
-    // TODO: implement dispose
-    super.dispose();
   }
 
   @override
@@ -140,7 +129,7 @@ class _LoginPageState extends State<LoginPage> {
               onPressed: () {
                 final isValid = _formKey.currentState!.validate();
                 if(!isValid) return;
-                loginUser();
+                loginUser(context);
               }, 
               style: const ButtonStyle(
                 backgroundColor: MaterialStatePropertyAll<Color>(buttonColor),

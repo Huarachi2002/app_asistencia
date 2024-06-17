@@ -111,7 +111,7 @@ class _HomePageState extends State<HomePage> {
             ),
           ],
         ),
-        body: (data.isEmpty) 
+        body: (false) 
           ? const Center(child: CircularProgressIndicator(),)
           :
             (currentIndex == 0)
@@ -143,15 +143,22 @@ class _HorarioView extends StatelessWidget {
             mainAxisSize: MainAxisSize.min  ,
             children: [
               const SizedBox(height: 10,),
-              const Text(
-                'Horario',
-                style: TextStyle(
-                    color: Colors.black,
-                    fontWeight: FontWeight.bold,
-                    decoration: TextDecoration.none,
-                    fontSize: 35
-                ),
-              ),  
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text(
+                    'Horario',
+                    style: TextStyle(
+                        color: Colors.black,
+                        fontWeight: FontWeight.bold,
+                        decoration: TextDecoration.none,
+                        fontSize: 35
+                    ),
+                  ),
+                  IconButton(onPressed: (){ context.push('/qr');}, icon: const Icon(Icons.qr_code))
+                ],
+              ),
+              
               const Divider(
                 thickness: 3,
                 color: widgetColor,

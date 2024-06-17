@@ -1,5 +1,6 @@
 import 'package:app_asistencia/pages/Home_Page.dart';
 import 'package:app_asistencia/pages/Login_Page.dart';
+import 'package:app_asistencia/pages/Qr_Page.dart';
 import 'package:go_router/go_router.dart';
 
 final appRouter = GoRouter(
@@ -12,6 +13,10 @@ final appRouter = GoRouter(
     GoRoute(
       path: '/home',
       builder: (context, state) => const HomePage(),
-    )
+    ),
+    GoRoute(
+      path: '/qr',
+      builder: (context, state) => const QrPage(),
+    ),
   ]
 );
